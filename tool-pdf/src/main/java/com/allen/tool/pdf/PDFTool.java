@@ -12,14 +12,18 @@ public class PDFTool {
 
     //private static final String PDF_FILE = "C:\\Users\\Administrator\\Desktop\\pdf\\HS.pdf";
 
-    private static final String PDF_FILE = "/Users/allen/Documents/pdf/hunsun/HS.pdf";
+    //private static final String PDF_FILE = "/Users/allen/Documents/pdf/hunsun/HS.pdf";
 
-    private static final String TXT_FILE = "/Users/allen/Documents/pdf/hunsun/HS.txt";
+    //private static final String TXT_FILE = "/Users/allen/Documents/pdf/hunsun/HS.txt";
 
     private static final String STOCK_FILE = "/Users/allen/Documents/pdf/hunsun/stock-file.txt";
 
-    private static final String ABSOLUTE_FILEPATH = "/Users/allen/Documents/app/";
+    //private static final String ABSOLUTE_FILEPATH = "/Users/allen/Documents/app/";
 
+
+    private static final String PDF_FILE = "./HS.pdf";
+    private static final String TXT_FILE = "./HS.txt";
+    private static final String ABSOLUTE_FILEPATH = "./";
 
     public static final String endStr = "END OF REPORT";
     public static final String pageKey = "PAGE";
