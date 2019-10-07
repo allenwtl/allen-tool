@@ -18,15 +18,22 @@ public class PDFTool {
 
     private static final String STOCK_FILE = "/Users/allen/Documents/pdf/hunsun/stock-file.txt";
 
-    //private static final String ABSOLUTE_FILEPATH = "/Users/allen/Documents/app/";
+//    private static final String ABSOLUTE_FILEPATH = "/Users/allen/Documents/app/";
 
 
-    private static final String PDF_FILE = "."+File.separator+"HS.pdf";
-    private static final String TXT_FILE = "."+File.separator+"HS.txt";
     private static final String ABSOLUTE_FILEPATH = "."+File.separator;
+
+    private static final String PDF_FILE = ABSOLUTE_FILEPATH+"HS.pdf";
+    private static final String TXT_FILE = ABSOLUTE_FILEPATH+"HS.txt";
+
+
+    private static final String CCASS_FILE = ABSOLUTE_FILEPATH+"ccass.txt";
+    private static final String OUTPUT_FILE = ABSOLUTE_FILEPATH+"output.txt";
 
     public static final String endStr = "END OF REPORT";
     public static final String pageKey = "PAGE";
+
+    public static final String CCASS_FILE_SPLIT_STR = "HKSCC - CCASS";
 
 
     public static void main(String[] args) {
@@ -38,7 +45,7 @@ public class PDFTool {
         List<String> stockFlagList = parseTxtFileAndCreateStockList();
 
         try {
-            processCcassTextV3(stockFlagList);
+            processCCASSTextV4(stockFlagList);
         } catch (Exception e){
 
         }
@@ -239,6 +246,86 @@ public class PDFTool {
         bufferedWriter.flush();
         bufferedWriter.close();
 
+
+    }
+
+    /**
+     * 匹配 ccass 中的数据
+     *
+     * @param stockCodeList
+     * @throws IOException
+     */
+    public static void processCCASSTextV4(final List<String> stockCodeList) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(CCASS_FILE));
+
+        String line= "";
+        String currentPage = "";
+        List<String> pageRelatedStockList = new ArrayList<>();
+
+
+        StringBuilder pageTitleBuilder = new StringBuilder();
+
+        int titleCount = 0;
+
+        while ( true ){
+
+            line = bufferedReader.readLine();
+            String lineTemp = line;
+            if ( StringUtils.isBlank(lineTemp)){
+                continue;
+            }
+
+            if( lineTemp.contains(endStr)){
+                break;
+            }
+
+            if( lineTemp.contains(CCASS_FILE_SPLIT_STR)){
+                if(!pageRelatedStockList.isEmpty()){
+                    sb.append(pageTitleBuilder.toString());
+                    int lastIndex = currentPage.lastIndexOf(pageKey);
+                    currentPage = currentPage.substring( lastIndex );
+                    sb.append(currentPage).append("\n");
+                    for (String stockLine : pageRelatedStockList){
+                        sb.append(stockLine).append("\n");
+                    }
+                    sb.append("\n");
+                    pageRelatedStockList = new ArrayList<>();
+                }
+
+                pageTitleBuilder = new StringBuilder();
+
+                titleCount = 0;
+            }
+
+
+            titleCount ++ ;
+            if(titleCount <= 3){
+                pageTitleBuilder.append(lineTemp).append("\n");
+            }
+
+
+            lineTemp = StringUtils.deleteWhitespace(lineTemp);
+
+            if ( lineTemp.contains(pageKey) ){
+                currentPage = line;
+            } else {
+                for ( String stock: stockCodeList ){
+                    if ( lineTemp.contains(stock)){
+                        pageRelatedStockList.add(line);
+                    }
+                }
+            }
+        }
+
+        bufferedReader.close();
+
+        BufferedWriter bufferedWriter  = new BufferedWriter(new FileWriter(OUTPUT_FILE));
+
+        bufferedWriter.write(sb.toString());
+        bufferedWriter.flush();
+        bufferedWriter.close();
 
     }
 
