@@ -261,7 +261,6 @@ public class PDFTool {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(CCASS_FILE));
 
         String line= "";
-        String currentPage = "";
         List<String> pageRelatedStockList = new ArrayList<>();
 
 
@@ -283,14 +282,11 @@ public class PDFTool {
 
             if( lineTemp.contains(CCASS_FILE_SPLIT_STR)){
                 if(!pageRelatedStockList.isEmpty()){
-                    sb.append(pageTitleBuilder.toString());
-                    int lastIndex = currentPage.lastIndexOf(pageKey);
-                    currentPage = currentPage.substring( lastIndex );
-                    sb.append(currentPage).append("\n");
+                    sb.append(pageTitleBuilder.toString()).append("\n");
                     for (String stockLine : pageRelatedStockList){
                         sb.append(stockLine).append("\n");
                     }
-                    sb.append("\n");
+                    sb.append("\n").append("\n");
                     pageRelatedStockList = new ArrayList<>();
                 }
 
@@ -303,18 +299,15 @@ public class PDFTool {
             titleCount ++ ;
             if(titleCount <= 3){
                 pageTitleBuilder.append(lineTemp).append("\n");
+                continue;
             }
 
 
             lineTemp = StringUtils.deleteWhitespace(lineTemp);
 
-            if ( lineTemp.contains(pageKey) ){
-                currentPage = line;
-            } else {
-                for ( String stock: stockCodeList ){
-                    if ( lineTemp.contains(stock)){
-                        pageRelatedStockList.add(line);
-                    }
+            for ( String stock: stockCodeList ){
+                if ( lineTemp.contains(stock)){
+                    pageRelatedStockList.add(line);
                 }
             }
         }
