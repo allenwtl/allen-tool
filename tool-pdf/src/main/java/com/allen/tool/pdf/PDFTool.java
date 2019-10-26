@@ -145,7 +145,7 @@ public class PDFTool {
 
                 str = str.replace(",", "");
 
-                int sInt = Integer.parseInt(str);
+                long sInt = Long.parseLong(str);
                 if ( sInt != 0 ) {
                     continue;
                 }
